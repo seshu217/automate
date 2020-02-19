@@ -1,3 +1,3 @@
 FROM tomcat
 MAINTAINER seshu
-COPY */target/*.war /usr/local/tomcat/webapps/webapp.war
+COPY /var/lib/tomcat8/webapps/*.war /usr/local/tomcat/webapps/webapp.war
