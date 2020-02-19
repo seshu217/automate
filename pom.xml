@@ -24,7 +24,6 @@
   <modules>
     <module>server</module>
     <module>webapp</module>
-    <module>Dockerfile</module>
   </modules>
 
   <distributionManagement>
