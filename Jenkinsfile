@@ -1,25 +1,26 @@
-node('master') 
+node('master')
 {
-    stage('ContinuousDownload') 
+    stage('checkout code from SCM')
     {
-       git 'https://github.com/intelliqittrainings/maven.git'
+    git 'https://github.com/seshu217/automate'
     }
-    stage('ContinuousBuild')
+    stage('Build package')
     {
-        sh label: '', script: 'mvn package'
+        sh 'mvn clean package'
     }
-    stage('ContinuousDeployment')
+    stage('Build docker image')
     {
-        sh label: '', script: 'scp /home/ubuntu/.jenkins/workspace/multibranch_master/webapp/target/webapp.war ubuntu@172.31.82.60:/var/lib/tomcat8/webapps/testapp.war'
+        sh 'sudo docker build -t seshu6666/webserver .'
     }
-    stage('ContinuousTesting')
+    stage('push docker image into registry')
     {
-        git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
-        sh label: '', script: 'java -jar /home/ubuntu/.jenkins/workspace/multibranch_master/testing.jar'
+        withCredentials([string(credentialsId: 'dockpd', variable: 'docker')]) {
+    sh "sudo docker login -u seshu6666 -p ${docker}"
+                }
+        sh 'sudo docker push seshu6666/webserver'
     }
-    stage('ContinuousDelivery')
+    stage('Run container')
     {
-       sh label: '', script: 'scp /home/ubuntu/.jenkins/workspace/multibranch_master/webapp/target/webapp.war ubuntu@172.31.80.35:/var/lib/tomcat8/webapps/prodapp.war' 
+     sh 'ssh ubuntu@172.31.27.102 sudo docker run --name web -p 9090:8080 -d seshu6666/webserver'
     }
-    
 }
