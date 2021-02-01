@@ -1,0 +1,42 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('checkout SCM')
+        {
+            steps
+            {
+                git 'https://github.com/seshu217/automate'
+            }
+        }
+        stage('Build artifact')
+        {
+            steps
+            {
+                sh 'mvn clean package'
+            }
+        }
+        stage('build docker image')
+        {
+            steps
+            {
+                sh 'sudo docker build -t royal.cyber.com:5000/webapp:1.0 .'
+            }
+        }
+        stage('push docker image')
+        {
+            steps
+            {
+                sh 'sudo docker push royal.cyber.com:5000/webapp:1.0'
+            }
+        }
+        stage('docker container start')
+        {
+            steps
+            {
+                sh 'sudo docker run --name appserver -p 8181:8080 -d royal.cyber.com:5000/webapp:1.0'
+            }
+        }
+    }
+}
