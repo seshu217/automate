@@ -1,0 +1,32 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('checkout code')
+        {
+            steps
+            {
+                git 'https://github.com/seshu217/automate'
+            }
+        }
+        stage('build artifact')
+        {
+            steps
+            {
+                sh 'mvn package'
+            }
+        }
+    }
+    post
+    {
+        success
+        {
+            sh 'sudo docker build -t seshu6666/email .'
+        }
+        failure
+        {
+            mail bcc: 'seshuisontheway@gmail.com', body: 'Latest Build Got failed fix and check in code again into remote repository', cc: 'dinggdhso@gmail.com', from: '', replyTo: '', subject: 'Build Failed', to: 'adiseshu207@gmail.com'
+        }
+    }
+}
